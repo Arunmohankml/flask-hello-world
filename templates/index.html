@@ -1,1 +1,214 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WebChat</title>
+  <style>
+    body {
+      margin:0px;
+      font-family: sans-serif;
+    }
+      #chatscreen{
+    	flex-direction: column;
+    	
+    }
+    #messages {
+      
+      padding: 10px;
+      height:78vh;
+      overflow-y: scroll;
+      background-color: #25252b;
+      
+    }
+    .msgBox {
+      
+      border-radius: 5px;
+      
+      max-width: 100%;
+      padding: 2px;
+      word-wrap: break-word;
+      white-space: pre-wrap;
+      margin: 0px;
+      color: white;
+      margin-bottom:10px;
+    }
+    .nameDisplay {
+      
+      color: white;
+      padding: 2px;
+      margin: 0px;
+      max-width: 50px;
+      font-size: 17px;
+    }
+    .bottom-bar{
+    	background-color:#1f1f2d;
+    	display:flex;
+    	justify-content: space-between;
+    	gap:20px;
+    	padding:20px;
+    	border-top:2px solid #393940;
+    }
+   
+    .bottom-bar input {
+      flex:1;
+      border-radius: 40px;
+      height:40px;
+      border: 1px solid black;
+      padding:5px;
+      background-color: #2c2e3c;
+    }
+    .bottom-bar button{
+    	white-space: nowrap;
+    	border-radius: 50%;
+    	border: 1px solid black;
+    	width: 50px;
+			height:50px;
+			background-image: url('https://d15ciend3ae6iz.cloudfront.net/m3a207%2Fpreview%2F67511314%2Fmain_large.png?response-content-disposition=inline%3Bfilename%3D%22main_large.png%22%3B&response-content-type=image%2Fpng&Expires=1748260344&Signature=QlwEFauc~pcq93IotOfpCx9bZh0gnt4zd6h5-YL1x2Dzs24nB3vGVuxE9IVA6lxQCc03rUBw3Ae0TXJspzdsuXU8KoNnuhEU0O1ZiWYpYYm261BB9vlZpJ4V-mK-8IJXbk~SUWro8kMpRb7R1KX9OFKAyNEyIwaS-AeSv0xc6i5B1bNwz7tfAB15Do1zgywc58~wk-9bq3W5ALLY0PklfdSJmBxTJU8PvbKi9F8z4gRkmas95djfTYBtVGNBQ8peJIPKSA1Tw1S699C5j~Djv-REy0qz7OK06a8d9QzqbGChdRJcarbUNVDxldu5oxlhmqJHGM-WQJM8xom50KQeiw__&Key-Pair-Id=APKAJT5WQLLEOADKLHBQ');
+		  background-size: cover;
+		  background-position: center;
+		  background-repeat: no-repeat;
+    }
+    
+     .top-bar{
+    	background-color:  #25252b;
+    	display:flex;
+    	padding:5px;
+    	border-bottom: 2px solid #393940;
+    }
+    .top-bar h3{
+    	color:white;
+    	font-size: 15px;
+    }
+    .set {
+    	
+    	display:flex;
+		  align-items: flex-start;
+		  gap: 10px;
+    }
+    .uandp{
+    	display:flex;
+    	flex-direction: column;
+    }
+ .discord-icon {
+  height: 40px;
+  width: 40px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  background-image: url('https://www.svgrepo.com/show/331368/discord-v2.svg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
 
+}
+#loginpage {
+  background-color: #1c1c1c;
+  height: 100vh; /* take full height */
+  display: flex;
+  flex-direction: column;
+  justify-content: center; /* vertical center */
+  align-items: center;     /* horizontal center */
+}
+#loginpage input,
+#loginpage button {
+  margin: 10px;
+  border: 1px solid black;
+  border-radius:20px;
+}
+  </style>
+</head>
+<body>
+
+  <div id="loginpage">
+    <input id="username" placeholder="Enter your name">
+    <button onClick="setUsername()">Conform</button>
+  </div>
+
+  <div id="chatscreen" style="display:none;">
+  	  <div class="top-bar" >
+    		<h3>#general-chat</h3>
+    	</div>
+    <div id="messages">
+    	<div id="set">
+    		<div id='uandp'></div>
+       </div>
+    </div>
+    
+    <div class="bottom-bar" >
+    	<input id="message" type="text" placeholder="Type a message">
+    <button onclick="sendMessage()"></button>
+    </div>
+
+  </div>
+
+  <script src="https://cdn.socket.io/4.3.2/socket.io.min.js"></script>
+  <script>
+    const socket = io();
+
+    const messageInput = document.getElementById('message');
+    const messagesDiv = document.getElementById('messages');
+    const loginpage = document.getElementById('loginpage');
+    const username = document.getElementById('username');
+    const chatscreen = document.getElementById('chatscreen');
+
+    socket.on('message', function(message) {
+      const [user, msg] = message.split(':', 2);
+      
+      
+				
+  const parent = document.createElement('div');
+  parent.className = 'set';
+
+  // Profile pic
+  const img = document.createElement('div');
+  img.className = 'discord-icon';
+
+  // Message container
+  const uandp = document.createElement('div');
+  uandp.className = 'uandp';
+
+  const u = document.createElement('h3');
+  u.textContent = user;
+  u.className = 'nameDisplay';
+
+  const m = document.createElement('p');
+  m.textContent = msg;
+  m.className = 'msgBox';
+
+  // Append elements
+  uandp.appendChild(u);
+  uandp.appendChild(m);
+  parent.appendChild(img);
+  parent.appendChild(uandp);
+  messagesDiv.appendChild(parent);
+
+  messagesDiv.scrollTop = messagesDiv.scrollHeight;
+  
+    });
+
+    function setUsername() {
+      if (username.value.trim() !== '') {
+        loginpage.style.display = 'none';
+        chatscreen.style.display = 'flex';
+      }
+    }
+
+ function sendMessage() {
+  const msg = messageInput.value.trim();
+  const user = username.value;
+  if (msg === '') return;
+
+  // New wrapper for each message
+
+  socket.send(user + ":" + msg);
+  messageInput.value = '';
+}
+
+    messageInput.addEventListener('keydown', function(e) {
+      if (e.key === 'Enter') {
+        sendMessage();
+      }
+    });
+  </script>
+
+</body>
+</html>
